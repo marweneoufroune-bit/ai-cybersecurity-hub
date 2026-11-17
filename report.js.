@@ -1,0 +1,53 @@
+
+const fs = require("fs");
+const path = require("path");
+
+function generateReport(results) {
+  const date = new Date().toISOString();
+
+  const lines = [
+    "# Cybersecurity Hub - Rapport d'audit",
+    "",
+    `Date : ${date}`,
+    "",
+    "## Résultats",
+    "",
+    `- Site : ${results.site || "Non renseigné"}`,
+    `- HTTPS : ${results.https ? "Activé" : "Non vérifié"}`,
+    `- Statut HTTP : ${results.status || "Non disponible"}`,
+    "",
+    "## En-têtes de sécurité",
+    ""
+  ];
+
+  const headers = results.securityHeaders || {};
+
+  for (const [name, value] of Object.entries(headers)) {
+    lines.push(`- ${name} : ${value}`);
+  }
+
+  lines.push(
+    "",
+    "## Avertissement",
+    "",
+    "Ce rapport présente des vérifications passives.",
+    "Il ne constitue pas un audit de sécurité complet."
+  );
+
+  const report = lines.join("\n");
+  const reportsDir = path.join(__dirname, "reports");
+
+  fs.mkdirSync(reportsDir, { recursive: true });
+
+  const filename = `rapport-${Date.now()}.md`;
+
+  fs.writeFileSync(
+    path.join(reportsDir, filename),
+    report,
+    "utf8"
+  );
+
+  return filename;
+}
+
+module.exports = { generateReport };
