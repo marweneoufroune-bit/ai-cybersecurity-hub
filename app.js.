@@ -1,0 +1,24 @@
+
+const { checkHttps } = require("./scanner");
+const { generateReport } = require("./report");
+
+async function runAudit(url) {
+  try {
+    console.log("Démarrage de l'audit...");
+
+    const results = await checkHttps(url);
+
+    console.log("Vérification terminée.");
+
+    const reportFile = generateReport(results);
+
+    console.log("Rapport généré :", reportFile);
+
+    return results;
+  } catch (error) {
+    console.error("Audit impossible :", error.message);
+    return null;
+  }
+}
+
+module.exports = { runAudit };
