@@ -175,21 +175,24 @@
     </section>
 
     <section class="panel">
-      <h2>Nouvel audit</h2>
-      <p style="color:#94a3b8; margin-top:10px;">
-        Les analyses seront disponibles après connexion du moteur.
-      </p>
+  <h2>Nouvel audit passif</h2>
+  <p style="color:#94a3b8; margin-top:10px;">
+    Vérification HTTPS et tentative de lecture des en-têtes publics.
+  </p>
 
-      <input
-        type="url"
-        placeholder="https://exemple.com"
-        disabled
-      >
+  <form id="audit-form">
+    <label for="audit-url">Adresse du site à vérifier</label>
+    <input
+      id="audit-url"
+      type="url"
+      placeholder="https://exemple.com"
+      required
+    >
+    <button id="audit-button" type="submit">Vérifier</button>
+  </form>
 
-      <button disabled>
-        Analyse bientôt disponible
-      </button>
-    </section>
+  <div id="audit-result" role="status" aria-live="polite" style="margin-top:18px;"></div>
+</section>
 
     <section class="panel">
       <h2>Historique des analyses</h2>
@@ -204,5 +207,63 @@
     Cybersecurity Hub © 2026 — Defensive Security Only
   </footer>
 
+<script>
+  const auditForm = document.getElementById("audit-form");
+  const auditUrl = document.getElementById("audit-url");
+  const auditButton = document.getElementById("audit-button");
+  const auditResult = document.getElementById("audit-result");
+
+  auditForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    auditResult.textContent = "";
+
+    let url;
+    try {
+      url = new URL(auditUrl.value);
+      if (url.protocol !== "https:" && url.protocol !== "http:") {
+        throw new Error("Adresse invalide");
+      }
+    } catch {
+      auditResult.textContent = "Entre une adresse web valide commençant par http:// ou https://.";
+      return;
+    }
+
+    const usesHttps = url.protocol === "https:";
+    auditButton.disabled = true;
+    auditButton.textContent = "Vérification…";
+
+    try {
+      const response = await fetch(url.href, {
+        method: "HEAD",
+        mode: "cors",
+        cache: "no-store"
+      });
+
+      const headersToCheck = [
+        "strict-transport-security",
+        "content-security-policy",
+        "x-content-type-options",
+        "x-frame-options",
+        "referrer-policy"
+      ];
+
+      const found = headersToCheck.filter((name) => response.headers.has(name));
+      const missing = headersToCheck.filter((name) => !response.headers.has(name));
+
+      auditResult.textContent =
+        "Adresse en HTTPS : " + (usesHttps ? "oui" : "non") + ". " +
+        "Réponse reçue (HTTP " + response.status + "). " +
+        "En-têtes visibles : " + (found.length ? found.join(", ") : "aucun parmi ceux vérifiés") + ". " +
+        "En-têtes non visibles : " + missing.join(", ") + ".";
+    } catch {
+      auditResult.textContent =
+        "Adresse en HTTPS : " + (usesHttps ? "oui" : "non") + ". " +
+        "Le navigateur ou le site empêche la lecture de la réponse (souvent à cause des règles CORS). Les en-têtes n’ont pas pu être vérifiés.";
+    } finally {
+      auditButton.disabled = false;
+      auditButton.textContent = "Vérifier";
+    }
+  });
+</script>
 </body>
 </html>
