@@ -1,0 +1,29 @@
+project:
+  name: "Cybersecurity Hub"
+  version: "0.1.0"
+
+security:
+  authorized_targets_only: true
+  require_target_approval: true
+
+scan:
+  mode: "passive"
+  check_https: true
+  check_security_headers: true
+  check_public_dns: true
+  check_cookies: true
+
+restrictions:
+  exploit_testing: false
+  brute_force: false
+  destructive_tests: false
+  automatic_changes: false
+
+reports:
+  format: "markdown"
+  save_history: true
+
+remediation:
+  enabled: true
+  require_manual_approval: true
+  backup_before_changes: true
