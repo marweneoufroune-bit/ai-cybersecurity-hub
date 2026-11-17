@@ -1,0 +1,26 @@
+# Cybersecurity Hub
+
+Mon projet personnel de cybersécurité défensive.
+
+## Objectif
+Créer un outil qui aide à vérifier la sécurité de sites web pour lesquels j'ai une autorisation.
+
+## Fonctionnalités prévues
+- Vérification HTTPS.
+- Analyse des en-têtes de sécurité.
+- Vérification de la configuration DNS publique.
+- Génération de rapports de sécurité.
+- Propositions de corrections.
+- Validation manuelle avant les modifications sensibles.
+
+## Règles de sécurité
+- Analyser uniquement les sites autorisés.
+- Privilégier les vérifications non intrusives.
+- Ne jamais modifier un site sans autorisation.
+- Conserver une possibilité de retour en arrière.
+
+## Environnement
+- Windows 11
+- GitHub
+- Outils hébergés dans le cloud
+- Aucun logiciel à installer localementbon
